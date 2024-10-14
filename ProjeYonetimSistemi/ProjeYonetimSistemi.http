@@ -1,0 +1,6 @@
+@ProjeYonetimSistemi_HostAddress = http://localhost:5037
+
+GET {{ProjeYonetimSistemi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
