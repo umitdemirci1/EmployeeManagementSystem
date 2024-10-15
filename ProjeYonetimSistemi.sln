@@ -5,6 +5,10 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjeYonetimSistemi", "ProjeYonetimSistemi\ProjeYonetimSistemi.csproj", "{B2EEAD40-370E-441A-9762-EC0C38E33FC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{FDF98D89-FF08-43F6-9D06-805A664DC58D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{53ACECED-E47E-44F4-A12A-430736529E6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{B2EEAD40-370E-441A-9762-EC0C38E33FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2EEAD40-370E-441A-9762-EC0C38E33FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2EEAD40-370E-441A-9762-EC0C38E33FC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDF98D89-FF08-43F6-9D06-805A664DC58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDF98D89-FF08-43F6-9D06-805A664DC58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDF98D89-FF08-43F6-9D06-805A664DC58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDF98D89-FF08-43F6-9D06-805A664DC58D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53ACECED-E47E-44F4-A12A-430736529E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53ACECED-E47E-44F4-A12A-430736529E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53ACECED-E47E-44F4-A12A-430736529E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53ACECED-E47E-44F4-A12A-430736529E6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
