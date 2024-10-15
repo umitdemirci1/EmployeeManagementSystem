@@ -1,4 +1,5 @@
-﻿using Core.IdentityModels;
+﻿using Core;
+using Core.IdentityModels;
 using Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +30,23 @@ namespace DAL
                .WithOne(u => u.ApplicationUser)
                .HasForeignKey<User>(u => u.ApplicationUserId);
 
-            modelBuilder.Entity<User>().HasQueryFilter(User => !User.IsDeleted);
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(EntityBase).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var filter = Expression.Lambda(Expression.Equal(
+                        Expression.Property(parameter, nameof(EntityBase.IsDeleted)),
+                        Expression.Constant(false)
+                    ), parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(filter);
+                }
+
+                modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => !u.IsDeleted);
+                modelBuilder.Entity<ApplicationRole>().HasQueryFilter(r => !r.IsDeleted);
+
+            }
         }
 
     }
