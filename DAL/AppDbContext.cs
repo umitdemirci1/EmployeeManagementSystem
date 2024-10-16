@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
+    public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -30,7 +30,9 @@ namespace DAL
                .WithOne(u => u.ApplicationUser)
                .HasForeignKey<User>(u => u.ApplicationUserId);
 
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
+
+            foreach (var entityType in entityTypes)
             {
                 if (typeof(EntityBase).IsAssignableFrom(entityType.ClrType))
                 {
@@ -42,11 +44,10 @@ namespace DAL
 
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(filter);
                 }
-
-                modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => !u.IsDeleted);
-                modelBuilder.Entity<ApplicationRole>().HasQueryFilter(r => !r.IsDeleted);
-
             }
+
+            modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => !u.IsDeleted);
+            modelBuilder.Entity<ApplicationRole>().HasQueryFilter(r => !r.IsDeleted);
         }
 
     }
