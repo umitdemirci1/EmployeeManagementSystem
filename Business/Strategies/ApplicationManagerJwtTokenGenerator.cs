@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Business.Strategies
 {
-    public class ApplicationManagerJwtTokenGenerator : IJwtTokenGenerator
+    public class ApplicationManagerJwtTokenGenerator : IApplicationManagerJwtTokenGenerator
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,11 +29,11 @@ namespace Business.Strategies
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName)
-                };
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(ClaimTypes.Name, user.UserName)
+                    };
 
             claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
@@ -41,10 +41,10 @@ namespace Business.Strategies
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpireMinutes"])),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.IServices
+namespace Business.Strategies
 {
-    public interface IJwtTokenGenerator
+    public interface ITenantUserJwtTokenGenerator
     {
         Task<string> GenerateJwtToken(ApplicationUser user);
     }
