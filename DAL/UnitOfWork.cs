@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Models;
+using DAL.IRepositories;
 using DAL.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace DAL
     {
         private readonly AppDbContext _context;
         private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
+        private IUserRepository _userRepository;
+        private ICompanyRepository _companyRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -29,6 +32,7 @@ namespace DAL
             var repositoryType = typeof(T) switch
             {
                 Type t when t == typeof(User) => typeof(UserRepository),
+                Type t when t == typeof(Company) => typeof(CompanyRepository),
                 //Other types will be added here
                 _ => typeof(Repository<T>)
             };
@@ -36,6 +40,22 @@ namespace DAL
             var repository = (IRepository<T>)Activator.CreateInstance(repositoryType, _context);
             _repositories.Add(typeof(T), repository);
             return repository;
+        }
+
+        public IUserRepository UserRepository
+        {
+            get
+            {
+                return _userRepository ??= new UserRepository(_context);
+            }
+        }
+
+        public ICompanyRepository CompanyRepository
+        {
+            get
+            {
+                return _companyRepository ??= new CompanyRepository(_context);
+            }
         }
 
         public async Task<int> CompleteAsync()

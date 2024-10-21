@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Core.Models
 {
-    public class User : EntityBase
+    public class User : TenantBaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

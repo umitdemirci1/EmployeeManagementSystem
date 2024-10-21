@@ -1,4 +1,5 @@
 ﻿using Core;
+using DAL.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace DAL
     {
         IRepository<T> Repository<T>() where T : EntityBase;
         Task<int> CompleteAsync();
+        IUserRepository UserRepository { get; }
+        ICompanyRepository CompanyRepository { get; }
     }
 }

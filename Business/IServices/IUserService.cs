@@ -14,6 +14,6 @@ namespace Business.IServices
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(User user);
-        Task CompletAsync();
+        Task CompleteAsync();
     }
 }

@@ -22,7 +22,7 @@ namespace Business.Services
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task CompletAsync()
+        public async Task CompleteAsync()
         {
             await _unitOfWork.CompleteAsync();
         }
