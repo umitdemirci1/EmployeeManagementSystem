@@ -17,13 +17,59 @@ namespace Business.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IConfiguration _configuration;
+        private readonly IJwtTokenGenerator _applicationManagerJwtTokenGenerator;
+        private readonly IJwtTokenGenerator _tenantUserJwtTokenGenerator;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
+        public AccountService(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IJwtTokenGenerator applicationManagerJwtTokenGenerator,
+            IJwtTokenGenerator tenantUserJwtTokenGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
+            _applicationManagerJwtTokenGenerator = applicationManagerJwtTokenGenerator;
+            _tenantUserJwtTokenGenerator = tenantUserJwtTokenGenerator;
+        }
+
+        public async Task<IdentityResult> CreateApplicationManagerAsync(string email, string password)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "ApplicationManager");
+            if (!roleResult.Succeeded)
+            {
+                return roleResult;
+            }
+
+            return IdentityResult.Success;
+        }
+
+        public async Task<string> LoginApplicationManagerAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null || !await _userManager.IsInRoleAsync(user, "ApplicationManager"))
+            {
+                return null;
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+            if (result.Succeeded)
+            {
+                return await _applicationManagerJwtTokenGenerator.GenerateJwtToken(user);
+            }
+
+            return null;
         }
 
         public async Task<string> LoginAsync(string tenantId, string email, string password)
@@ -37,35 +83,10 @@ namespace Business.Services
             var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
             if (result.Succeeded)
             {
-                return await GenerateJwtToken(user);
+                return await _tenantUserJwtTokenGenerator.GenerateJwtToken(user);
             }
 
             return null;
-        }
-
-        private async Task<string> GenerateJwtToken(ApplicationUser user)
-        {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim("tenantId", user.CompanyId)
-            }.Union(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

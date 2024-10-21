@@ -1,6 +1,7 @@
 ﻿using Core.Models;
 using DAL;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Middlewares
 {
@@ -15,17 +16,24 @@ namespace API.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
-            var tenantId = context.Request.Headers["X-Tenant-ID"].FirstOrDefault();
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            if (!string.IsNullOrEmpty(tenantId))
+            if (!string.IsNullOrEmpty(token))
             {
-                using (var scope = serviceProvider.CreateScope())
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                var tenantId = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "tenantId")?.Value;
+
+                if (!string.IsNullOrEmpty(tenantId))
                 {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    var tenant = await LoadTenantAsync(dbContext, tenantId);
-                    if (tenant != null)
+                    using (var scope = serviceProvider.CreateScope())
                     {
-                        context.Items["TenantId"] = tenant.Id;
+                        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                        var tenant = await LoadTenantAsync(dbContext, tenantId);
+                        if (tenant != null)
+                        {
+                            context.Items["TenantId"] = tenant.Id;
+                        }
                     }
                 }
             }
