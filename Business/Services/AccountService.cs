@@ -1,4 +1,5 @@
 ﻿using Business.IServices;
+using Business.Strategies;
 using Core.IdentityModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -17,14 +18,14 @@ namespace Business.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IJwtTokenGenerator _applicationManagerJwtTokenGenerator;
-        private readonly IJwtTokenGenerator _tenantUserJwtTokenGenerator;
+        private readonly IApplicationManagerJwtTokenGenerator _applicationManagerJwtTokenGenerator;
+        private readonly ITenantUserJwtTokenGenerator _tenantUserJwtTokenGenerator;
 
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IJwtTokenGenerator applicationManagerJwtTokenGenerator,
-            IJwtTokenGenerator tenantUserJwtTokenGenerator)
+            IApplicationManagerJwtTokenGenerator applicationManagerJwtTokenGenerator,
+            ITenantUserJwtTokenGenerator tenantUserJwtTokenGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;

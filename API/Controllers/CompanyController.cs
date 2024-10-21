@@ -2,6 +2,7 @@
 using Business.IServices;
 using DAL;
 using DAL.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,7 @@ namespace API.Controllers
             return Ok(companyId);
         }
 
+        [Authorize(Roles = "ApplicationManager")]
         [HttpPost("create-company")]
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyModel model)
         {

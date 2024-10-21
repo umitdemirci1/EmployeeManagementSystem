@@ -16,6 +16,14 @@ namespace API.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
+            var path = context.Request.Path.Value;
+
+            if (path.Contains("/api/account/login") || path.Contains("/api/account/create-applicationmanager"))
+            {
+                await _next(context);
+                return;
+            }
+
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (!string.IsNullOrEmpty(token))
@@ -23,6 +31,13 @@ namespace API.Middlewares
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
                 var tenantId = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "tenantId")?.Value;
+                var role = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+
+                if (role == "ApplicationManager")
+                {
+                    await _next(context);
+                    return;
+                }
 
                 if (!string.IsNullOrEmpty(tenantId))
                 {
