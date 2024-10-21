@@ -1,4 +1,5 @@
-﻿using Business.IServices;
+﻿using Business.DTOs;
+using Business.IServices;
 using DAL;
 using DAL.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -17,23 +18,45 @@ namespace API.Controllers
             _companyService = companySevice;
         }
 
-        [HttpGet]
-        [HttpPost("validate")]
-        public async Task<IActionResult> ValidateCompany([FromBody] string companyName)
+        [HttpGet("get-company-id")]
+        public async Task<IActionResult> GetCompanyIdByCompanyName(string companyName)
         {
             if (string.IsNullOrEmpty(companyName))
             {
                 return BadRequest("Company name is required");
             }
 
-            var result = await _companyService.ValidateCompanyAsync(companyName);
-            if (result)
+            var companyId = await _companyService.GetCompanyIdByCompanyName(companyName);
+            if (companyId == null)
             {
-                return Ok("Company name is valid");
+                return BadRequest("Company name is invalid");
+            }
+
+            return Ok(companyId);
+        }
+
+        [HttpPost("create-company")]
+        public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyModel model)
+        {
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                return BadRequest("Company name is required");
+            }
+
+            var company = await _companyService.GetCompanyIdByCompanyName(model.Name);
+            if (company != null)
+            {
+                return BadRequest("Company name already exists");
+            }
+
+            var result = await _companyService.CreateCompanyAsync(model);
+            if(result)
+            {
+                return Ok("Company created successfully");
             }
             else
             {
-                return BadRequest("Company name is invalid");
+                return BadRequest("Company creation failed");
             }
         }
     }

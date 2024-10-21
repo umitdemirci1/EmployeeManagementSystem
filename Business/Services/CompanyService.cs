@@ -1,4 +1,5 @@
-﻿using Business.IServices;
+﻿using Business.DTOs;
+using Business.IServices;
 using Core.Models;
 using DAL;
 using System;
@@ -16,6 +17,33 @@ namespace Business.Services
         public CompanyService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task<bool> CreateCompanyAsync(CreateCompanyModel model)
+        {
+            var newCompany = new Company
+            {
+                Name = model.Name,
+                Domain = model.Domain,
+            };
+
+            await _unitOfWork.CompanyRepository.AddAsync(newCompany);
+            int changes = await _unitOfWork.CompleteAsync();
+            if (changes > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<string> GetCompanyIdByCompanyName(string companyName)
+        {
+            var companyId = await _unitOfWork.CompanyRepository.GetCompanyIdByCompanyName(companyName);
+            if (companyId == null)
+            {
+                return null;
+            }
+            return companyId;
         }
 
         public async Task<bool> ValidateCompanyAsync(string companyName)

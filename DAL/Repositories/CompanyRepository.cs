@@ -19,5 +19,10 @@ namespace DAL.Repositories
         {
             return await _context.Companies.Where(c => c.Name == companyName).FirstOrDefaultAsync();
         }
+
+        public async Task<string> GetCompanyIdByCompanyName(string companyName)
+        {
+            return await _context.Companies.Where(c => c.Name == companyName).Select(c => c.Id).FirstOrDefaultAsync();
+        }
     }
 }

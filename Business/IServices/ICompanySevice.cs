@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Business.DTOs;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,7 @@ namespace Business.IServices
     public interface ICompanySevice
     {
         Task<bool> ValidateCompanyAsync(string companyName);
+        Task<string> GetCompanyIdByCompanyName(string companyName);
+        Task<bool> CreateCompanyAsync(CreateCompanyModel model);
     }
 }

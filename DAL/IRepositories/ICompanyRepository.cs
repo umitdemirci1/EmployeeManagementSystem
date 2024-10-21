@@ -10,5 +10,6 @@ namespace DAL.IRepositories
     public interface ICompanyRepository : IRepository<Company>
     {
         Task<Company> GetByNameAsync(string companyName);
+        Task<string> GetCompanyIdByCompanyName(string companyName);
     }
 }
