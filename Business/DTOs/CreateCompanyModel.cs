@@ -9,6 +9,5 @@ namespace Business.DTOs
     public class CreateCompanyModel
     {
         public string Name { get; set; }
-        public string Domain { get; set; }
     }
 }
