@@ -33,7 +33,7 @@ namespace API.Controllers
                 return BadRequest("Company name is invalid");
             }
 
-            return Ok(companyId);
+            return Ok(new { companyId });
         }
 
         [Authorize(Roles = "ApplicationManager")]
@@ -52,7 +52,7 @@ namespace API.Controllers
             }
 
             var result = await _companyService.CreateCompanyAsync(model);
-            if(result)
+            if (result)
             {
                 return Ok("Company created successfully");
             }
