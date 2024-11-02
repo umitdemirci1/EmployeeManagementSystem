@@ -1,6 +1,7 @@
 ﻿using Business.DTOs;
 using Business.IServices;
 using Core.IdentityModels;
+using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -18,22 +19,21 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-
         [HttpPost("create-applicationmanager")]
         public async Task<IActionResult> CreateApplicationManager([FromBody] CreateApplicationManagerRequestModel request)
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("Email or password is required.");
+                return BadRequest(new ApiResponse<object>(false, "Email or password is required."));
             }
 
-            var result = await _accountService.CreateApplicationManagerAsync(request.Email, request.Password);
+            var (result, errors) = await _accountService.CreateApplicationManagerAsync(request.Email, request.Password);
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new ApiResponse<object>(false, "Failed to create ApplicationManager.", null, errors));
             }
 
-            return Ok(new { message = "ApplicationManager is succesfully created." });
+            return Ok(new ApiResponse<object>(true, "ApplicationManager is successfully created."));
         }
 
         [HttpPost("login/applicationmanager")]
@@ -41,16 +41,16 @@ namespace API.Controllers
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("Email or password is required.");
+                return BadRequest(new ApiResponse<object>(false, "Email or password is required."));
             }
 
             var token = await _accountService.LoginApplicationManagerAsync(request.Email, request.Password);
             if (token == null)
             {
-                return Unauthorized("Invalid login credentials or authorization.");
+                return Unauthorized(new ApiResponse<object>(false, "Invalid login credentials or authorization."));
             }
 
-            return Ok(new { token });
+            return Ok(new ApiResponse<string>(true, "Login successful.", token));
         }
 
         [HttpPost("login")]
@@ -58,16 +58,16 @@ namespace API.Controllers
         {
             if (string.IsNullOrEmpty(request.TenantId) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("TenantId, Email, and password are required.");
+                return BadRequest(new ApiResponse<object>(false, "TenantId, Email, and password are required."));
             }
 
             var token = await _accountService.LoginAsync(request.TenantId, request.Email, request.Password);
             if (token == null)
             {
-                return Unauthorized("Invalid login credentials.");
+                return Unauthorized(new ApiResponse<object>(false, "Invalid login credentials."));
             }
 
-            return Ok(new { token });
+            return Ok(new ApiResponse<string>(true, "Login successful.", token));
         }
 
         [HttpPost("register")]
@@ -75,20 +75,20 @@ namespace API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<object>(false, "Invalid model state.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
             }
 
-            var result = await _accountService.RegisterCompanyManagerAsync(request.FistName, request.LastName, request.Email, request.Password, request.CompanyName);
+            var (result, errors) = await _accountService.RegisterCompanyManagerAsync(request.FistName, request.LastName, request.Email, request.Password, request.CompanyName);
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new ApiResponse<object>(false, "Registration failed.", null, errors));
             }
 
             // TODO: Notify application managers
             var user = await _accountService.FindByEmailAsync(request.Email);
             //await _notificationService.NotifyApplicationManagersAsync(user);
 
-            return Ok(new { message = "Registration successful, awaiting confirmation." });
+            return Ok(new ApiResponse<object>(true, "Registration successful, awaiting confirmation."));
         }
     }
 }

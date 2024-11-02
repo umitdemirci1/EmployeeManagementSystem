@@ -12,8 +12,8 @@ namespace Business.IServices
     {
         Task<string> LoginAsync(string tenantId, string email, string password);
         Task<string> LoginApplicationManagerAsync(string email, string password);
-        Task<IdentityResult> CreateApplicationManagerAsync(string email, string password);
-        Task<IdentityResult> RegisterCompanyManagerAsync(string firstName, string lastName, string email, string password, string companyName);
+        Task<(IdentityResult Result, IEnumerable<string> Errors)> CreateApplicationManagerAsync(string email, string password);
+        Task<(IdentityResult Result, IEnumerable<string> Errors)> RegisterCompanyManagerAsync(string firstName, string lastName, string email, string password, string companyName);
         Task<ApplicationUser> FindByEmailAsync(string email);
     }
 }

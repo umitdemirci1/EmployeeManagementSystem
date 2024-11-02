@@ -39,7 +39,7 @@ namespace Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IdentityResult> CreateApplicationManagerAsync(string email, string password)
+        public async Task<(IdentityResult Result, IEnumerable<string> Errors)> CreateApplicationManagerAsync(string email, string password)
         {
             var user = new ApplicationUser
             {
@@ -50,16 +50,16 @@ namespace Business.Services
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                return result;
+                return (result, result.Errors.Select(e => e.Description));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, "ApplicationManager");
             if (!roleResult.Succeeded)
             {
-                return roleResult;
+                return (roleResult, roleResult.Errors.Select(e => e.Description));
             }
 
-            return IdentityResult.Success;
+            return (IdentityResult.Success, null);
         }
 
         public async Task<string> LoginApplicationManagerAsync(string email, string password)
@@ -96,12 +96,12 @@ namespace Business.Services
             return null;
         }
 
-        public async Task<IdentityResult> RegisterCompanyManagerAsync(string firstName, string lastName, string email, string password, string companyName)
+        public async Task<(IdentityResult Result, IEnumerable<string> Errors)> RegisterCompanyManagerAsync(string firstName, string lastName, string email, string password, string companyName)
         {
             var existingCompany = await _unitOfWork.CompanyRepository.GetCompanyIdByCompanyName(companyName);
             if (existingCompany != null)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "This company name is already exist." });
+                return (IdentityResult.Failed(new IdentityError { Description = "This company name is already exist." }), new List<string> { "This company name is already exist." });
             }
 
             var company = new Company
@@ -120,13 +120,13 @@ namespace Business.Services
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                return result;
+                return (result, result.Errors.Select(e => e.Description));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, "CompanyManager");
             if (!roleResult.Succeeded)
             {
-                return roleResult;
+                return (roleResult, roleResult.Errors.Select(e => e.Description));
             }
 
             var customerUser = new User
@@ -141,7 +141,7 @@ namespace Business.Services
             await _userManager.UpdateAsync(user);
             await _unitOfWork.UserRepository.AddAsync(customerUser);
             await _unitOfWork.CompleteAsync();
-            return IdentityResult.Success;
+            return (IdentityResult.Success, null);
         }
 
         public async Task<ApplicationUser> FindByEmailAsync(string email)
