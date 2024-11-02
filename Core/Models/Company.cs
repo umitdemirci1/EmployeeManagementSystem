@@ -8,17 +8,12 @@ using System.Threading.Tasks;
 
 namespace Core.Models
 {
-    public class Company : TenantBaseEntity
+    public class Company : EntityBase
     {
         [Required]
         [StringLength(100, MinimumLength = 2)]
         public string Name { get; set; }
 
         public ICollection<ApplicationUser> Employees { get; set; }
-
-        public Company()
-        {
-            CompanyId = Id;
-        }
     }
 }

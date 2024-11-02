@@ -23,8 +23,7 @@ namespace Business.Services
         {
             var newCompany = new Company
             {
-                Name = model.Name,
-                Domain = model.Domain,
+                Name = model.Name
             };
 
             await _unitOfWork.CompanyRepository.AddAsync(newCompany);
