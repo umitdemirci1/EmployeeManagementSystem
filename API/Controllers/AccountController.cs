@@ -18,7 +18,7 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-        
+
         [HttpPost("create-applicationmanager")]
         public async Task<IActionResult> CreateApplicationManager([FromBody] CreateApplicationManagerRequestModel request)
         {
@@ -68,6 +68,27 @@ namespace API.Controllers
             }
 
             return Ok(new { token });
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _accountService.RegisterCompanyManagerAsync(request.FistName, request.LastName, request.Email, request.Password, request.CompanyName);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            // TODO: Notify application managers
+            var user = await _accountService.FindByEmailAsync(request.Email);
+            //await _notificationService.NotifyApplicationManagersAsync(user);
+
+            return Ok(new { message = "Registration successful, awaiting confirmation." });
         }
     }
 }
