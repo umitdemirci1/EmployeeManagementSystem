@@ -60,6 +60,16 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddRoleManager<RoleManager<ApplicationRole>>()
     .AddUserManager<UserManager<ApplicationUser>>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -106,7 +116,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowLocalhost3000");
 app.UseAuthentication();
 app.UseMiddleware<TenantMiddleware>();
 app.UseAuthorization();
