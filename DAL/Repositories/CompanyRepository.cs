@@ -29,5 +29,10 @@ namespace DAL.Repositories
         {
             return await _context.Companies.Where(c => c.IsApproved == true).ToListAsync();
         }
+
+        public async Task<List<Company>> GetPendingCompanies()
+        {
+            return await _context.Companies.Where(c => c.IsApproved == false).ToListAsync();
+        }
     }
 }

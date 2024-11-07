@@ -28,5 +28,16 @@ namespace API.Controllers
             }
             return Ok(new ApiResponse<object>(true, "Ok", approvedCompanies));
         }
+
+        [HttpGet("pending-companies")]
+        public async Task<IActionResult> PendingCompanies()
+        {
+            var pendingCompanies = await _companyService.GetPendingCompanies();
+            if (pendingCompanies == null)
+            {
+                return Ok(new ApiResponse<object>(true, "No pending companies found"));
+            }
+            return Ok(new ApiResponse<object>(true, "Ok", pendingCompanies));
+        }
     }
 }

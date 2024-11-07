@@ -14,5 +14,6 @@ namespace Business.IServices
         Task<string> GetCompanyIdByCompanyName(string companyName);
         Task<bool> CreateCompanyAsync(CreateCompanyModel model);
         Task<List<Company>> GetApprovedCompanies();
+        Task<List<Company>> GetPendingCompanies();
     }
 }

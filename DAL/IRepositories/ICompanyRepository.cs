@@ -12,5 +12,6 @@ namespace DAL.IRepositories
         Task<Company> GetByNameAsync(string companyName);
         Task<string> GetCompanyIdByCompanyName(string companyName);
         Task<List<Company>> GetApprovedCompanies();
+        Task<List<Company>> GetPendingCompanies();
     }
 }

@@ -64,5 +64,15 @@ namespace Business.Services
             }
             return companies;
         }
+
+        public async Task<List<Company>> GetPendingCompanies()
+        {
+            var companies = await _unitOfWork.CompanyRepository.GetPendingCompanies();
+            if (companies == null)
+            {
+                return new List<Company>();
+            }
+            return companies;
+        }
     }
 }
