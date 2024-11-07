@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Business.IServices
 {
-    public interface ICompanySevice
+    public interface ICompanyService
     {
         Task<bool> ValidateCompanyAsync(string companyName);
         Task<string> GetCompanyIdByCompanyName(string companyName);
         Task<bool> CreateCompanyAsync(CreateCompanyModel model);
+        Task<List<Company>> GetApprovedCompanies();
     }
 }

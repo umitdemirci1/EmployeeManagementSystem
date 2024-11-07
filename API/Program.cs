@@ -44,7 +44,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICompanySevice, CompanyService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<IApplicationManagerJwtTokenGenerator, ApplicationManagerJwtTokenGenerator>();

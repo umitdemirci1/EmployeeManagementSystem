@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Business.Services
 {
-    public class CompanyService : ICompanySevice
+    public class CompanyService : ICompanyService
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -53,6 +53,16 @@ namespace Business.Services
                 return false;
             }
             return true;
+        }
+
+        public async Task<List<Company>> GetApprovedCompanies()
+        {
+            var companies = await _unitOfWork.CompanyRepository.GetApprovedCompanies();
+            if (companies == null)
+            {
+                return new List<Company>();
+            }
+            return companies;
         }
     }
 }

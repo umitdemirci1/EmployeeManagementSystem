@@ -12,9 +12,9 @@ namespace API.Controllers
     [ApiController]
     public class CompanyController : ControllerBase
     {
-        private readonly ICompanySevice _companyService;
+        private readonly ICompanyService _companyService;
 
-        public CompanyController(ICompanySevice companySevice)
+        public CompanyController(ICompanyService companySevice)
         {
             _companyService = companySevice;
         }
