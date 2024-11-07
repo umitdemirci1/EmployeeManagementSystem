@@ -78,7 +78,7 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse<object>(false, "Invalid model state.", null, ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
             }
 
-            var (result, errors) = await _accountService.RegisterCompanyManagerAsync(request.FistName, request.LastName, request.Email, request.Password, request.CompanyName);
+            var (result, errors) = await _accountService.RegisterCompanyManagerAsync(request.FirstName, request.LastName, request.Email, request.Password, request.CompanyName);
             if (!result.Succeeded)
             {
                 return BadRequest(new ApiResponse<object>(false, "Registration failed.", null, errors));
