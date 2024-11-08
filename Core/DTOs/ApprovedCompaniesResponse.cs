@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.DTOs
+namespace Core.DTOs
 {
-    public class CreateCompanyModel
+    public class ApprovedCompaniesResponse
     {
+        public string CompanyId { get; set; }
         public string Name { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

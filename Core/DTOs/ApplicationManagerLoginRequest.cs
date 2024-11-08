@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.DTOs
+namespace Core.DTOs
 {
-    public class LoginRequest
+    public class ApplicationManagerLoginRequest
     {
-        public string TenantId { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

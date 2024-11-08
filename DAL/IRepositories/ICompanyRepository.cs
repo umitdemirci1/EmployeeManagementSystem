@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.DTOs;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace DAL.IRepositories
     {
         Task<Company> GetByNameAsync(string companyName);
         Task<string> GetCompanyIdByCompanyName(string companyName);
-        Task<List<Company>> GetApprovedCompanies();
+        Task<List<ApprovedCompaniesResponse>> GetApprovedCompanies();
         Task<List<Company>> GetPendingCompanies();
     }
 }

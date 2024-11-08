@@ -1,4 +1,4 @@
-﻿using Business.DTOs;
+﻿using Core.DTOs;
 using Business.IServices;
 using Core.Models;
 using DAL;
@@ -55,12 +55,12 @@ namespace Business.Services
             return true;
         }
 
-        public async Task<List<Company>> GetApprovedCompanies()
+        public async Task<List<ApprovedCompaniesResponse>> GetApprovedCompanies()
         {
             var companies = await _unitOfWork.CompanyRepository.GetApprovedCompanies();
             if (companies == null)
             {
-                return new List<Company>();
+                return new List<ApprovedCompaniesResponse>();
             }
             return companies;
         }

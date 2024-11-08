@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.DTOs;
+using Core.Models;
 using DAL.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,9 +26,18 @@ namespace DAL.Repositories
             return await _context.Companies.Where(c => c.Name == companyName).Select(c => c.Id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Company>> GetApprovedCompanies()
+        public async Task<List<ApprovedCompaniesResponse>> GetApprovedCompanies()
         {
-            return await _context.Companies.Where(c => c.IsApproved == true).ToListAsync();
+            var companies = await _context.Companies
+                .Where(c => c.IsApproved == true)
+                .Select(c => new ApprovedCompaniesResponse
+                {
+                    CompanyId = c.Id,
+                    Name = c.Name,
+                    CreatedAt = c.CreatedAt,
+                }).ToListAsync();
+
+            return companies;
         }
 
         public async Task<List<Company>> GetPendingCompanies()
